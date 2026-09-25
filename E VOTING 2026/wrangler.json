@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "blue-mud-7f9b",
+  "main": "worker/worker.js",
+  "compatibility_date": "2026-09-25",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "osskansa-voting",
+      "database_id": "cbe5a1ec-1ecf-4ad5-9cef-6cce9adef944"
+    }
+  ]
+}
