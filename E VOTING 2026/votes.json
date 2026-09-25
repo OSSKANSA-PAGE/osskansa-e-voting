@@ -1,0 +1,11 @@
+{
+  "totalVoters": 1300,
+  "active": true,
+  "votes": {
+    "01": 1,
+    "02": 0
+  },
+  "voters": {
+    "OSS001": true
+  }
+}
