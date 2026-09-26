@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "blue-mud-7f9b",
-  "main": "worker/worker.js",
+  "main": "worker.js",
   "compatibility_date": "2026-09-25",
   "d1_databases": [
     {
