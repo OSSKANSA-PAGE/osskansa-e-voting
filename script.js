@@ -601,9 +601,11 @@ const response = await fetch(`${API_URL}/api/toggle-election`, {
 
         const result = await response.json();
 
-        if (!response.ok || !result.success) {
-            throw new Error("Gagal mengubah status pemilihan.");
-        }
+       if (!response.ok || !result.success) {
+    throw new Error(
+        result.message || "Gagal mengubah status pemilihan."
+    );
+}
 
         data.active = result.active;
 
@@ -620,7 +622,7 @@ const response = await fetch(`${API_URL}/api/toggle-election`, {
 
         console.error("Gagal mengubah status pemilihan:", error);
 
-        notify("Gagal mengubah status pemilihan.");
+        notify("error.message");
     }
 }
 
