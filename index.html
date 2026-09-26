@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSSKANSA E-VOTING</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+    <div class="header-inner">
+
+        <div class="brand">
+            <div class="logo-box">
+                <img src="img/LOGO OSS.png" >
+                <span></span>
+            </div>
+
+            <div class="brand-text">
+                <strong>OSSKANSA</strong>
+                <small>E-VOTING</small>
+            </div>
+        </div>
+
+        <button class="admin-btn" onclick="openAdmin()">
+            ⚙ Admin
+        </button>
+
+    </div>
+</header>
+
+
+<!-- ================= MAIN ================= -->
+<main>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+
+            <div class="status-pill" id="statusPill">
+                <span></span>
+                PEMUNGUTAN SUARA DIBUKA
+            </div>
+
+            <h1>
+                Tentukan<br>
+                <span>Pemimpinmu.</span>
+            </h1>
+
+            <p>
+                Gunakan hak suara kamu untuk memilih
+                Ketua & Wakil Ketua OSIS periode berikutnya.
+            </p>
+
+            <div class="hero-info">
+                <div>
+                    <strong id="heroTotal">100</strong>
+                    <small>Total Pemilih</small>
+                </div>
+
+                <div>
+                    <strong id="heroVotes">0</strong>
+                    <small>Sudah Memilih</small>
+                </div>
+
+                <div>
+                    <strong id="heroPercent">0%</strong>
+                    <small>Partisipasi</small>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- PROGRESS -->
+    <section class="section">
+
+        <div class="section-title">
+            <div>
+                <span class="eyebrow">PARTISIPASI</span>
+                <h2>Progress Pemilihan</h2>
+            </div>
+
+            <strong id="progressText">0%</strong>
+        </div>
+
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="progress-bottom">
+            <span><b id="progressVotes">0</b> siswa sudah memilih</span>
+            <span>Target <b id="progressTarget">100</b> pemilih</span>
+        </div>
+
+    </section>
+
+<!-- VOTER CODE -->
+<section class="section voter-code-section">
+
+    <div class="section-title">
+        <div>
+            <span class="eyebrow">VERIFIKASI PEMILIH</span>
+            <h2>Masukkan Kode Pemilih</h2>
+        </div>
+    </div>
+
+    <input
+        type="text"
+        id="voterCode"
+        placeholder="Contoh: OSS001"
+        autocomplete="off"
+    >
+
+</section>
+
+    <!-- CANDIDATE -->
+    <section class="section candidate-section">
+
+        <div class="section-title">
+            <div>
+                <span class="eyebrow">CALON</span>
+                <h2>Pilih Pasangan Calon</h2>
+            </div>
+        </div>
+
+        <div class="candidate-grid" id="candidateGrid"></div>
+
+    </section>
+
+
+    <!-- ALREADY VOTED -->
+    <div class="voted-box hidden" id="votedBox">
+        <div class="check-icon"></div>
+        <div>
+            <strong>Suara kamu sudah tercatat.</strong>
+            <p>Terima kasih telah menggunakan hak suara.</p>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- ================= VOTE MODAL ================= -->
+<div class="modal hidden" id="voteModal">
+
+    <div class="modal-card">
+
+        <button class="close-btn" onclick="closeVoteModal()">×</button>
+
+        <div class="modal-icon">🗳️</div>
+
+        <span class="eyebrow">KONFIRMASI</span>
+
+        <h2>Yakin dengan pilihanmu?</h2>
+
+        <p>
+            Kamu akan memilih pasangan calon:
+        </p>
+
+        <div class="selected-candidate" id="selectedCandidate"></div>
+
+        <div class="modal-warning">
+            ⚠️ Suara yang sudah diberikan tidak dapat diubah.
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn secondary" onclick="closeVoteModal()">
+                Batal
+            </button>
+
+            <button class="btn primary" onclick="confirmVote()">
+                ✓ Ya, Saya Memilih
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ================= ADMIN LOGIN ================= -->
+<div class="modal hidden" id="adminLogin">
+
+    <div class="modal-card small">
+
+        <button class="close-btn" onclick="closeAdmin()">×</button>
+
+        <div class="modal-icon">🔐</div>
+
+        <span class="eyebrow">ADMINISTRATOR</span>
+
+        <h2>Login Admin</h2>
+
+        <p>Masukkan password untuk membuka dashboard.</p>
+
+        <input
+            type="password"
+            id="adminPassword"
+            placeholder="Password admin"
+            autocomplete="off"
+        >
+
+        <div class="error-text" id="loginError"></div>
+
+        <button class="btn primary full" onclick="loginAdmin()">
+            Masuk Dashboard
+        </button>
+
+    </div>
+</div>
+
+
+<!-- ================= ADMIN DASHBOARD ================= -->
+<div class="admin-panel hidden" id="adminPanel">
+
+    <div class="admin-container">
+
+        <div class="admin-top">
+            <div>
+                <span class="eyebrow">CONTROL PANEL</span>
+                <h1>Dashboard Admin</h1>
+                <p>Kelola pemilihan OSSKANSA.</p>
+            </div>
+
+            <button class="btn secondary" onclick="logoutAdmin()">
+                Keluar
+            </button>
+        </div>
+
+
+        <!-- STAT -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <span>Total Pemilih</span>
+                <strong id="adminTotal">100</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Sudah Memilih</span>
+                <strong id="adminVoted">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Belum Memilih</span>
+                <strong id="adminRemaining">100</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Partisipasi</span>
+                <strong id="adminPercent">0%</strong>
+            </div>
+
+        </div>
+
+
+        <!-- ELECTION CONTROL -->
+        <div class="admin-card">
+
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">STATUS</span>
+                    <h2>Pemungutan Suara</h2>
+                </div>
+
+                <div class="admin-status" id="adminStatus">
+                    AKTIF
+                </div>
+            </div>
+
+            <div class="admin-control-row">
+
+                <div>
+                    <strong id="electionStatusText">
+                        Pemungutan suara sedang dibuka.
+                    </strong>
+
+                    <p>
+                        Gunakan tombol ini untuk membuka atau menutup voting.
+                    </p>
+                </div>
+
+                <button
+                    class="btn primary"
+                    id="toggleBtn"
+                    onclick="toggleElection()"
+                >
+                    Tutup Voting
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- VOTER TARGET -->
+        <div class="admin-card">
+
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">PENGATURAN</span>
+                    <h2>Jumlah Pemilih</h2>
+                </div>
+            </div>
+
+            <div class="input-row">
+
+                <input
+                    type="number"
+                    id="totalVoterInput"
+                    min="1"
+                    placeholder="Jumlah pemilih"
+                >
+
+                <button class="btn primary" onclick="saveTotalVoters()">
+                    Simpan
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULTS -->
+        <div class="admin-card">
+
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">HASIL SEMENTARA</span>
+                    <h2>Perolehan Suara</h2>
+                </div>
+            </div>
+
+            <div id="resultChart"></div>
+
+        </div>
+
+
+        <!-- EDIT CANDIDATES -->
+        <div class="admin-card">
+
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">DATA CALON</span>
+                    <h2>Edit Pasangan Calon</h2>
+                </div>
+            </div>
+
+            <div id="candidateEditor"></div>
+
+        </div>
+
+
+        <!-- DANGER -->
+        <div class="danger-card">
+
+            <div>
+                <strong>Reset Data Voting</strong>
+                <p>
+                    Menghapus seluruh suara dan mengembalikan jumlah suara menjadi 0.
+                </p>
+            </div>
+
+            <button class="btn danger" onclick="resetVoting()">
+                Reset Voting
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ================= NOTIFICATION ================= -->
+<div class="notification" id="notification">
+    <span></span>
+    <p id="notificationText"></p>
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
