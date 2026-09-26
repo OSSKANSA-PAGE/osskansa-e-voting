@@ -7,6 +7,7 @@
 /* ================= CONFIG ================= */
 
 const STORAGE_KEY = "osskansa_evoting_final_v1";
+const API_URL = "https://osskansa-e-voting-api.osskansapage.workers.dev";
 const ADMIN_PASSWORD = "11172000";
 
 
@@ -117,7 +118,7 @@ function saveData() {
 
 async function syncFromServer() {
     try {
-        const response = await fetch("/api/results");
+        const response = await fetch(`${API_URL}/api/results`);
 
         if (!response.ok) {
             throw new Error("Gagal mengambil data server");
@@ -306,7 +307,7 @@ if (!voterCode) {
     return;
 }
 
-        const response = await fetch("/api/vote", {
+        const response = await fetch(`${API_URL}/api/vote`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -578,7 +579,7 @@ if (!password) {
     return;
 }
 
-const response = await fetch("/api/toggle-election", {
+const response = await fetch(`${API_URL}/api/toggle-election`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -842,7 +843,7 @@ if (!password) {
     return;
 }
 
-const response = await fetch("/api/reset", {
+const response = await fetch(`${API_URL}/api/reset`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
