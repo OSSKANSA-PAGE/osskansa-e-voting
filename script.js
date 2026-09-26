@@ -7,6 +7,7 @@
 /* ================= CONFIG ================= */
 
 const STORAGE_KEY = "osskansa_evoting_final_v1";
+const API_URL = "https://osskansa-e-voting-api.osskansapage.workers.dev";
 const ADMIN_PASSWORD = "11172000";
 
 
@@ -117,7 +118,7 @@ function saveData() {
 
 async function syncFromServer() {
     try {
-        const response = await fetch("/api/results");
+        const response = await fetch(`${API_URL}/api/results`);
 
         if (!response.ok) {
             throw new Error("Gagal mengambil data server");
@@ -125,6 +126,16 @@ async function syncFromServer() {
 
         const serverData = await response.json();
 
+       const candidateResponse = await fetch(`${API_URL}/api/candidates`);
+
+if (candidateResponse.ok) {
+    const candidateData = await candidateResponse.json();
+
+    if (candidateData.success) {
+        data.candidates = candidateData.candidates;
+    }
+}
+       
         // Ambil data suara dari server
         data.votes = [
             Number(serverData.votes["01"]) || 0,
@@ -132,55 +143,20 @@ async function syncFromServer() {
         ];
 
         // Total pemilih dari server
-        data.totalVoters =
-            Number(serverData.totalVoters) || 1300;
+        data.totalVoters = Number(serverData.totalVoters) || 1300;
 
         // Status pemilihan dari server
-        data.active =
-            serverData.active !== false;
+        data.active = serverData.active !== false;
 
-
-        // =========================
-        // AMBIL DATA PASLON
-        // =========================
-
-        const candidatesResponse =
-            await fetch("/api/candidates");
-
-        if (!candidatesResponse.ok) {
-            throw new Error("Gagal mengambil data paslon");
-        }
-
-        const candidatesData =
-            await candidatesResponse.json();
-
-        if (
-            candidatesData.success &&
-            Array.isArray(candidatesData.candidates)
-        ) {
-            data.candidates =
-                candidatesData.candidates;
-        }
-
-
-        // Update tampilan
         updateAll();
 
-        console.log(
-            "Data berhasil disinkronkan dari server:",
-            serverData,
-            candidatesData
-        );
+        console.log("Data berhasil disinkronkan dari server:", serverData);
 
     } catch (error) {
-
-        console.error(
-            "Gagal sinkronisasi server:",
-            error
-        );
-
+        console.error("Gagal sinkronisasi server:", error);
     }
 }
+
 setInterval(syncFromServer, 2000);
 
 /* ================= INITIALIZE ================= */
@@ -341,7 +317,7 @@ if (!voterCode) {
     return;
 }
 
-        const response = await fetch("/api/vote", {
+        const response = await fetch(`${API_URL}/api/vote`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -613,7 +589,7 @@ if (!password) {
     return;
 }
 
-const response = await fetch("/api/toggle-election", {
+const response = await fetch(`${API_URL}/api/toggle-election`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -803,16 +779,6 @@ function renderEditor() {
                 rows="4"
             >${escapeHTML(candidate.vision)}</textarea>
 
-            <label class="editor-label">
-                Misi
-            </label>
-
-            <textarea
-                class="editor-input"
-                id="mission-${index}"
-    rows="6"
->${escapeHTML(candidate.mission.join("\n"))}</textarea>
-
             <button
                 class="btn primary editor-save"
                 onclick="saveCandidate(${index})"
@@ -833,9 +799,7 @@ function renderEditor() {
 
 /* ================= SAVE CANDIDATE ================= */
 
-async function saveCandidate(index) {
-
-    const candidate = data.candidates[index];
+function saveCandidate(index) {
 
     const chairman =
         document.getElementById(`chairman-${index}`).value.trim();
@@ -846,96 +810,28 @@ async function saveCandidate(index) {
     const vision =
         document.getElementById(`vision-${index}`).value.trim();
 
-   const missionText =
-    document.getElementById(`mission-${index}`).value.trim();
-
-   const mission =
-    missionText
-        ? missionText
-            .split("\n")
-            .map(item => item.trim())
-            .filter(item => item !== "")
-        : [];
-
-
     if (!chairman || !vice || !vision) {
+
         notify("Semua data paslon harus diisi.");
+
         return;
     }
 
+    data.candidates[index].chairman = chairman;
+    data.candidates[index].vice = vice;
+    data.candidates[index].vision = vision;
 
-    const password = prompt("Masukkan password admin:");
+    saveData();
 
-    if (!password) {
-        return;
-    }
+    renderCandidates();
+    renderEditor();
 
-
-    try {
-
-        const response = await fetch("/api/candidates/update", {
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                password: password,
-                number: candidate.number,
-                chairman: chairman,
-                vice: vice,
-                photo: candidate.photo,
-                vision: vision,
-                mission: mission
-            })
-        });
-
-
-        const result = await response.json();
-
-
-        if (!response.ok || !result.success) {
-            throw new Error(
-                result.message || "Gagal menyimpan data paslon."
-            );
-        }
-
-
-        data.candidates[index].chairman = chairman;
-        data.candidates[index].vice = vice;
-        data.candidates[index].vision = vision;
-
-
-        saveData();
-
-        renderCandidates();
-        renderEditor();
-
-
-        notify(
-            `Data Paslon ${candidate.number} berhasil disimpan.`
-        );
-
-
-        syncFromServer();
-
-
-    } catch (error) {
-
-        console.error(
-            "Gagal menyimpan paslon:",
-            error
-        );
-
-        notify(
-            error.message ||
-            "Gagal menyimpan data paslon."
-        );
-
-    }
+    notify(
+        `Data Paslon ${data.candidates[index].number} berhasil disimpan.`
+    );
 
 }
+
 
 /* ================= RESET ================= */
 
@@ -957,7 +853,7 @@ if (!password) {
     return;
 }
 
-const response = await fetch("/api/reset", {
+const response = await fetch(`${API_URL}/api/reset`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -1085,4 +981,3 @@ document
         }
 
     });
-
