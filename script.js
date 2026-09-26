@@ -781,6 +781,17 @@ function renderEditor() {
                 rows="4"
             >${escapeHTML(candidate.vision)}</textarea>
 
+            <label class="editor-label">
+                Misi
+            </label>
+
+            <textarea
+                class="editor-input"
+                id="mission-${index}"
+                rows="6"
+                
+>${escapeHTML(candidate.mission.join("\n"))}</textarea>
+
             <button
                 class="btn primary editor-save"
                 onclick="saveCandidate(${index})"
@@ -801,7 +812,9 @@ function renderEditor() {
 
 /* ================= SAVE CANDIDATE ================= */
 
-function saveCandidate(index) {
+async function saveCandidate(index) {
+
+    const candidate = data.candidates[index];
 
     const chairman =
         document.getElementById(`chairman-${index}`).value.trim();
@@ -812,6 +825,17 @@ function saveCandidate(index) {
     const vision =
         document.getElementById(`vision-${index}`).value.trim();
 
+    const missionText =
+        document.getElementById(`mission-${index}`).value.trim();
+
+    const mission =
+        missionText
+            ? missionText
+                .split("\n")
+                .map(item => item.trim())
+                .filter(item => item !== "")
+            : [];
+
     if (!chairman || !vice || !vision) {
 
         notify("Semua data paslon harus diisi.");
@@ -819,19 +843,73 @@ function saveCandidate(index) {
         return;
     }
 
-    data.candidates[index].chairman = chairman;
-    data.candidates[index].vice = vice;
-    data.candidates[index].vision = vision;
+    const password = prompt("Masukkan password admin:");
 
-    saveData();
+    if (!password) {
+        return;
+    }
 
-    renderCandidates();
-    renderEditor();
+    try {
 
-    notify(
-        `Data Paslon ${data.candidates[index].number} berhasil disimpan.`
-    );
+        const response = await fetch(
+            `${API_URL}/api/candidates/update`,
+            {
+                method: "POST",
 
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    password: password,
+                    number: candidate.number,
+                    chairman: chairman,
+                    vice: vice,
+                    photo: candidate.photo,
+                    vision: vision,
+                    mission: mission
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message ||
+                "Gagal menyimpan data paslon."
+            );
+        }
+
+        data.candidates[index].chairman = chairman;
+        data.candidates[index].vice = vice;
+        data.candidates[index].vision = vision;
+        data.candidates[index].mission = mission;
+
+        saveData();
+
+        renderCandidates();
+        renderEditor();
+
+        notify(
+            `Data Paslon ${candidate.number} berhasil disimpan.`
+        );
+
+        syncFromServer();
+
+    } catch (error) {
+
+        console.error(
+            "Gagal menyimpan paslon:",
+            error
+        );
+
+        notify(
+            error.message ||
+            "Gagal menyimpan data paslon."
+        );
+
+    }
 }
 
 
