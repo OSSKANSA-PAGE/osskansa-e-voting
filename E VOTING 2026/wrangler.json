@@ -3,6 +3,13 @@
   "name": "blue-mud-7f9b",
   "main": "worker.js",
   "compatibility_date": "2026-09-25",
+
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+
   "d1_databases": [
     {
       "binding": "DB",
