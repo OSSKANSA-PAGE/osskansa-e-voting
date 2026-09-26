@@ -126,6 +126,16 @@ async function syncFromServer() {
 
         const serverData = await response.json();
 
+       const candidateResponse = await fetch(`${API_URL}/api/candidates`);
+
+if (candidateResponse.ok) {
+    const candidateData = await candidateResponse.json();
+
+    if (candidateData.success) {
+        data.candidates = candidateData.candidates;
+    }
+}
+       
         // Ambil data suara dari server
         data.votes = [
             Number(serverData.votes["01"]) || 0,
