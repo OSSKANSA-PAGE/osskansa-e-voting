@@ -212,7 +212,7 @@ function renderCandidates() {
        <img 
     src="${candidate.number === "01" 
         ? "img/paslon 1.jpeg" 
-        : "img/paslon 2.jpeg"}"
+        : "img/paslon 1.jpeg"}"
     alt="Foto Paslon ${escapeAttribute(candidate.number)}"
 >
 </div>
