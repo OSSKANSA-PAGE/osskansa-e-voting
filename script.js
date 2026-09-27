@@ -148,6 +148,8 @@ if (candidateResponse.ok) {
         // Status pemilihan dari server
         data.active = serverData.active !== false;
 
+       saveData();
+
         updateAll();
 
         console.log("Data berhasil disinkronkan dari server:", serverData);
