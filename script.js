@@ -157,7 +157,8 @@ if (candidateResponse.ok) {
     }
 }
 
-setInterval(syncFromServer, 2000);
+setInterval(syncFromServer, 60000);
+syncFromServer();
 
 /* ================= INITIALIZE ================= */
 
