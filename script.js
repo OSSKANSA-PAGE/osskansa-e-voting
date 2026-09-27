@@ -27,7 +27,7 @@ const defaultData = {
             number: "01",
             chairman: "Nama Ketua 01",
             vice: "Nama Wakil 01",
-            photo: src :"img/paslon 1.jpeg",
+            photo: "img/paslon 1.jpeg",
             vision: "Mewujudkan OSIS yang aktif, inovatif, dan menjadi wadah aspirasi siswa.",
             mission: [
                 "Meningkatkan partisipasi siswa.",
@@ -40,7 +40,7 @@ const defaultData = {
             number: "02",
             chairman: "Nama Ketua 02",
             vice: "Nama Wakil 02",
-            photo: src :"img/paslon 2.jpeg",
+            photo: "img/paslon 2.jpeg",
             vision: "Membangun organisasi siswa yang berintegritas, kreatif, dan berorientasi pada prestasi.",
             mission: [
                 "Mendorong prestasi siswa.",
