@@ -357,7 +357,7 @@ voterCodeInput.value = "";
 
         updateAll();
 
-        notify("Suara berhasil dicatat. Terima kasih!");
+        notify("Suara berhasil dicatat dan akan terdata dalam 1 menit. Terima kasih!");
 
     } catch (error) {
         console.error("Gagal mengirim suara:", error);
