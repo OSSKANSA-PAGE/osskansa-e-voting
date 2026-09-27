@@ -126,29 +126,27 @@ async function syncFromServer() {
 
         const serverData = await response.json();
 
-       const candidateResponse = await fetch(`${API_URL}/api/candidates`);
+        const candidateResponse = await fetch(`${API_URL}/api/candidates`);
 
-if (candidateResponse.ok) {
-    const candidateData = await candidateResponse.json();
+        if (candidateResponse.ok) {
+            const candidateData = await candidateResponse.json();
 
-    if (candidateData.success) {
-        data.candidates = candidateData.candidates;
-    }
-}
-       
-        // Ambil data suara dari server
+            if (candidateData.success) {
+                data.candidates = candidateData.candidates;
+            }
+        }
+
         data.votes = [
             Number(serverData.votes["01"]) || 0,
             Number(serverData.votes["02"]) || 0
         ];
 
-        // Total pemilih dari server
         data.totalVoters = Number(serverData.totalVoters) || 1300;
-
-        // Status pemilihan dari server
         data.active = serverData.active !== false;
 
-       saveData();
+        // Simpan data terbaru dari server
+        // agar foto lama dari localStorage tidak muncul lagi
+        saveData();
 
         updateAll();
 
@@ -158,7 +156,6 @@ if (candidateResponse.ok) {
         console.error("Gagal sinkronisasi server:", error);
     }
 }
-
 setInterval(syncFromServer, 60000);
 syncFromServer();
 
@@ -214,7 +211,7 @@ function renderCandidates() {
                 <div class="candidate-photo">
     <img 
         src="${escapeAttribute(candidate.photo)}"
-        alt="Foto Paslon ${escapeAttribute(candidate.number)}"
+        alt="Fo ${escapeAttribute(candidate.number)}"
     >
 </div>
 
